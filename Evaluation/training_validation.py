@@ -22,7 +22,6 @@ from Evaluation.utilities import (
     get_patient_id,
     to_device,
 )
-from Models import SpectrogramDataset
 
 
 def training_validation(
@@ -157,7 +156,10 @@ def training_validation(
                 inputs, labels = to_device(inputs, device), to_device(labels, device)
                 optimizer.zero_grad()
 
-                outputs = model(inputs)
+                try:
+                    outputs = model(inputs)
+                except:
+                    continue
                 target = labels.float().unsqueeze(1)
                 loss = criterion(outputs, target)
                 loss.backward()

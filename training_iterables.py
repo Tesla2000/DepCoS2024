@@ -1,11 +1,12 @@
-from itertools import chain, product
+from itertools import chain, product, repeat
 
 from Config import Config, WindowParameters
 from Models import SpectrogramDataset
+from Models.LeNet5 import LeNet5
 from Models.WaveformDataset import WaveformDataset
 
 waveform_training_iterable = (
-    (1, WaveformDataset, False, Config.waveform_model_creator, (WindowParameters(use_window=False), None)),)
+    (1, WaveformDataset, False, (Config.waveform_model_creator, 1e-5), (WindowParameters(use_window=False), None)),)
 
 window_iterable = product(
     (
@@ -30,6 +31,9 @@ spectrogram_training_iterable = product(
     (Config.batch_size,),
     (SpectrogramDataset,),
     (False, True),
-    Config.base_models,
+    chain.from_iterable((
+        ((LeNet5, 1e-4),),
+        zip(Config.base_models, repeat(1e-5))
+    )),
     chain.from_iterable((traditional_iterable, window_iterable,)),
 )

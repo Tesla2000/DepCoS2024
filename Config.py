@@ -21,14 +21,12 @@ class Config:
     vowel = "a"
     disease = "Rekurrensparese"
     base_models = (
-        LeNet5,
         partial(models.vgg19, num_classes=1),
         models.resnet18,
     )
     criterion = nn.BCELoss()
     num_splits = 1
     early_stopping_patience = 3
-    learning_rate = 1e-5
     batch_size = 16
     root_path = Path(".")
     data_path = root_path / "Data"

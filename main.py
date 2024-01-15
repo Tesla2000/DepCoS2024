@@ -13,7 +13,7 @@ if __name__ == "__main__":
         batch_size,
         spectrogram_dataset,
         many_channels,
-        model_creation_function,
+        (model_creation_function, learning_rate),
         (window_arguments, augmentation),
     ) in chain.from_iterable((waveform_training_iterable, spectrogram_training_iterable)):
         model_creation_function = adjust(
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             early_stopping_patience=Config.early_stopping_patience,
             criterion=Config.criterion,
             model_creator=model_creation_function,
-            learning_rate=Config.learning_rate,
+            learning_rate=learning_rate,
             random_state=Config.random_state,
             augmentation=augmentation,
             dataset_type=spectrogram_dataset
