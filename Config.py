@@ -11,10 +11,11 @@ from torchvision import models
 
 
 class Config:
+    gamma = .9
     window_stride = 10
     window_size = 40
     vowel = "a"
-    disease = "Rekurrensparese"
+    diseases = ("Rekurrensparese", "Dysphonie", "Funktionelle Dysphonie", "Hyperfunktionelle Dysphonie", "Laryngitis",)
     base_models = (
         partial(models.vgg19, num_classes=1),
         models.resnet18,
@@ -31,6 +32,8 @@ class Config:
     summary_folder = data_path.joinpath(f"summaries/{session_time}")
     summary_folder.mkdir(exist_ok=True, parents=True)
     lists_path = data_path / "Lists"
+    vowels_path = data_path / "Vowels"
+    healthy_patients_folder = vowels_path / "Healthy"
     learning_rate = 1e-5
     random_state = 42
 
@@ -38,6 +41,8 @@ class Config:
 torch.manual_seed(Config.random_state)
 np.random.seed(Config.random_state)
 random.seed(Config.random_state)
+Config.data_path.mkdir(exist_ok=True, parents=True)
+Config.lists_path.mkdir(exist_ok=True, parents=True)
 
 
 class WindowParameters(NamedTuple):

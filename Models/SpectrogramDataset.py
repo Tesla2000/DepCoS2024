@@ -1,4 +1,5 @@
 import os
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -60,12 +61,10 @@ class SpectrogramDataset(Dataset):
         self.fmax = fmax
 
         # Extract and store sample information
-        for path in set(self.paths_to_audio):
-            audio_path, label = path.split(" ")
-            sample_id = os.path.splitext(os.path.basename(audio_path))[0]
-            sample_id = sample_id.split("_")[0]
+        for audio_path in set(self.paths_to_audio):
+            sample_id = re.findall(r'\d+', audio_path)[0]
 
-            self.samples[sample_id].label = int(label)
+            self.samples[sample_id].label = int("Healthy" not in audio_path)
             self.samples[sample_id].audio_paths.append(audio_path)
 
     def __len__(self):

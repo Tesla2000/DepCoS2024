@@ -8,3 +8,4 @@ Pillow~=10.1.0
 torchaudio~=2.1.1
 tqdm~=4.66.1
 tensorboard~=2.15.1
+gdown==4.7.3

@@ -1,3 +1,4 @@
+import re
 from copy import deepcopy
 from itertools import count, chain
 from typing import Callable, Literal
@@ -5,13 +6,16 @@ from typing import Callable, Literal
 import numpy as np
 import torch
 import torch.optim as optim
+import wandb
 from sklearn.metrics import f1_score, precision_score, recall_score
 from torch import nn
 from torch.nn.modules.loss import _Loss
+from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from Config import Config
+from Evaluation.get_paths import get_paths
 from Evaluation.get_transform import get_transform
 from Evaluation.utilities import (
     get_patient_id,
@@ -31,45 +35,36 @@ def training_validation(
     model_creator: Callable[[], nn.Module],
     learning_rate: float,
     augmentation: Augmentation,
+    gamma: float,
     random_state=42,
 ):
-    cv_iterable, transform, val_transform, patients_ids, file_paths = get_transform(vowels, augmentation, num_splits, random_state)
-
+    transform, val_transform = get_transform(augmentation)
+    cv_iterable, patients_ids, file_paths = get_paths(vowels, num_splits, random_state)
     for fold, (train_idx, val_idx) in enumerate(cv_iterable):
         model = model_creator().to(device)
+        run = wandb.init(project=f"{model.__name__}_{augmentation}")
+        run.watch(model)
         best_model_weights = None
         val_losses = []
 
         # ResNet18 https://discuss.pytorch.org/t/altering-resnet18-for-single-channel-images/29198/6
         if tuple(
             Config.results_folder.glob(
-                f"*{model.__name__}_{augmentation}_{fold}_{learning_rate}.pth"
+                f"*{model.__name__}_{augmentation}_{fold}.pth"
             )
         ):
             continue
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-
+        scheduler = lr_scheduler.ExponentialLR(optimizer, gamma=gamma)
         print(f"Fold {fold + 1}/{num_splits}")
 
         # Get train and validation patient IDs and file paths
         train_patients = np.array(patients_ids)[train_idx]
         val_patients = np.array(patients_ids)[val_idx]
 
-        train_files = list(
-            chain.from_iterable(
-                [f"{Config.data_path}/{file}"]
-                if file.endswith("0")
-                else 4 * [f"{Config.data_path}/{file}"]
-                for file in file_paths
-                if get_patient_id(file)[0] in train_patients[:, 0]
-            )
-        )
-        val_files = [
-            f"{Config.data_path}/{file}"
-            for file in file_paths
-            if get_patient_id(file)[0] in val_patients[:, 0]
-        ]
+        train_files = list(file for file in file_paths if re.findall(r'\d+', file)[0] in train_patients)
+        val_files = list(file for file in file_paths if re.findall(r'\d+', file)[0] in val_patients)
 
         train_dataset = SpectrogramDataset(train_files, transform)
         val_dataset = SpectrogramDataset(val_files, val_transform)
@@ -100,6 +95,7 @@ def training_validation(
                 optimizer.step()
 
                 total_loss += loss.item()
+                scheduler.step()
 
             train_loss = total_loss / len(train_loader)
 
