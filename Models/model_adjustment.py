@@ -16,19 +16,18 @@ def _window_forward_wrapper(forward, window_size: int, window_stride: int):
             sample = sample.cpu()
             for i in range(1, 500):
                 if torch.sum(sample[:, :, -i]) != 0:
-                    sample = sample[:, :, :max(window_size, len(sample) - i)]
+                    sample = sample[:, :, :max(window_size, sample.shape[-1] - i)]
                     break
             windows = tensor(
                 np.array(
                     tuple(
                         sample[:, :, i : i + window_size].numpy()
                         for i in range(
-                            0, len(sample[0, -1]) - window_size + 1, window_stride
+                            0, sample.shape[-1] - window_size + 1, window_stride
                         )
                     )
                 )
             ).to(device)
-            print(windows.shape, sample.shape)
             windows = forward(windows)
             mean_windows = torch.mean(windows)
             results[index] = torch.sigmoid(mean_windows)
