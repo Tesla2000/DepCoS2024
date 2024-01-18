@@ -14,7 +14,6 @@ from torchvision import models
 class Config:
     device = None
     sigma = 0.05
-    gamma = 0.9
     window_stride = 10
     window_size = 40
     diseases = (
@@ -34,7 +33,7 @@ class Config:
     batch_size = 16
     learning_rate_scheduler_creator = lambda optimizer: lr_scheduler.ExponentialLR(optimizer, gamma=.9)
     learning_rate = 1e-5
-    root_path = Path(".")
+    root_path = Path(__file__).parent
     data_path = root_path / "Data"
     session_time = datetime.now().strftime("%Y%m%d%H%M")
     results_folder = data_path.joinpath("results")
@@ -45,6 +44,7 @@ class Config:
     vowels_path = data_path / "Vowels"
     healthy_patients_folder = vowels_path / "Healthy"
     random_state = 42
+    google_drive_file_id = "1G1lCMR6hhW3BT8FWHekvHEXhxTf8yiqw"
 
 
 torch.manual_seed(Config.random_state)
@@ -56,5 +56,5 @@ Config.lists_path.mkdir(exist_ok=True, parents=True)
 
 class WindowParameters(NamedTuple):
     use_window: bool = True
-    window_size: int = 40
-    window_stride: int = 10
+    window_size: int = Config.window_size
+    window_stride: int = Config.window_stride

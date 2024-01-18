@@ -12,7 +12,7 @@ if __name__ == "__main__":
         print("Downloading data...")
         zip_path = Config.data_path / "Vowels.zip"
         os.system(
-            f"gdown https://drive.google.com/uc?id=1G1lCMR6hhW3BT8FWHekvHEXhxTf8yiqw -O {zip_path}"
+            f"gdown https://drive.google.com/uc?id={Config.google_drive_file_id} -O {zip_path}"
         )
         with ZipFile(zip_path) as zip_ref:
             zip_ref.extractall(Config.data_path)
