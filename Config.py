@@ -33,7 +33,7 @@ class Config:
     batch_size = 16
     learning_rate_scheduler_creator = lambda optimizer: lr_scheduler.ExponentialLR(optimizer, gamma=.9)
     learning_rate = 1e-5
-    root_path = Path(__file__).parent
+    root_path = Path('.')
     data_path = root_path / "Data"
     session_time = datetime.now().strftime("%Y%m%d%H%M")
     results_folder = data_path.joinpath("results")
