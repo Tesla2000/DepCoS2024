@@ -11,6 +11,8 @@ from torchvision import models
 
 
 class Config:
+    window_stride = 10
+    window_size = 40
     vowel = "a"
     disease = "Rekurrensparese"
     base_models = (

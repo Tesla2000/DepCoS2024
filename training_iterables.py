@@ -6,10 +6,13 @@ from Models.Augmentations import Augmentation
 window_iterable = product(
     (
         WindowParameters(
-            use_window=True, window_size=40, window_stride=10
+            use_window=True, window_size=Config.window_size, window_stride=Config.window_stride
         ),
     ),
-    (Augmentation.PAD_ZEROS,),
+    (
+        Augmentation.PAD_ZEROS,
+        Augmentation.ADD_NOISE_AND_PAD,
+    ),
 )
 
 traditional_iterable = product(
@@ -19,6 +22,7 @@ traditional_iterable = product(
         Augmentation.TIME_MASKING,
         Augmentation.COMBINED_MASKING,
         Augmentation.RESIZE,
+        Augmentation.ADD_NOISE,
     ),
 )
 
