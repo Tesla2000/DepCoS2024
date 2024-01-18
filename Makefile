@@ -14,8 +14,8 @@ setup: $(VENV)/bin/activate
 $(VENV)/bin/activate: requirements.txt
 	@echo "Creating virtual environment..."
 	@$(PYTHON) -m venv $(VENV)
-	@echo "Activating virtual environment..."
-	@source $(VENV)/bin/activate; \
+	@echo "Run 'source $(VENV)/bin/activate' to activate the virtual environment."
+
 
 install: $(VENV)/bin/activate
 	@echo "Installing requirements..."
