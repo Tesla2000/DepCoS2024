@@ -4,3 +4,4 @@ __pycache__
 Data
 /list_construction.py
 /read_results.py
+/wandb/
