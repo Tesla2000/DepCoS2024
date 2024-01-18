@@ -63,5 +63,10 @@ def get_transform(
         spectrogram_transform = transforms.Compose([])
         val_spectrogram_transform = spectrogram_transform
     if augmentation in (Augmentation.ADD_NOISE, Augmentation.ADD_NOISE_AND_PAD):
-        audio_transform = lambda y: y + Config.sigma * np.mean(y) * np.random.normal(size=y.shape)
-    return (audio_transform, spectrogram_transform), (audio_val_transform, val_spectrogram_transform)
+        audio_transform = lambda y: y + Config.sigma * np.mean(y) * np.random.normal(
+            size=y.shape
+        )
+    return (audio_transform, spectrogram_transform), (
+        audio_val_transform,
+        val_spectrogram_transform,
+    )

@@ -38,17 +38,32 @@ def to_device(data, device):
 
 
 # Function to get file paths from a text file
-def get_files_path(vowels: list[Literal['a', 'i', 'u', 'all']], health: bool = False) -> set[str]:
+def get_files_path(
+    vowels: list[Literal["a", "i", "u", "all"]], health: bool = False
+) -> set[str]:
     if health:
-        return set(str(audio_file) for vowel in vowels for audio_file in
-                     Config.healthy_patients_folder.iterdir() if
-                     re.findall(rf'_{vowel}' , audio_file.name)  or vowel == 'all')
-    return set(str(audio_file) for vowel in vowels for data_folder in
-                 Config.vowels_path.iterdir() for audio_file in data_folder.iterdir() if
-                 re.findall(rf'_{vowel}', audio_file.name) or vowel == 'all')
+        return set(
+            str(audio_file)
+            for vowel in vowels
+            for audio_file in Config.healthy_patients_folder.iterdir()
+            if re.findall(rf"_{vowel}", audio_file.name) or vowel == "all"
+        )
+    return set(
+        str(audio_file)
+        for vowel in vowels
+        for data_folder in Config.vowels_path.iterdir()
+        for audio_file in data_folder.iterdir()
+        if re.findall(rf"_{vowel}", audio_file.name) or vowel == "all"
+    )
 
 
 # Function to get a list of unique patient IDs from a text file
-def get_patients_id(vowels: list[Literal['a', 'i', 'u', 'all']], health: bool = False) -> set[str]:
-    return set(reduce(operator.add, map(re.compile(r'\d+').findall, get_files_path(vowels, health))))
-
+def get_patients_id(
+    vowels: list[Literal["a", "i", "u", "all"]], health: bool = False
+) -> set[str]:
+    return set(
+        reduce(
+            operator.add,
+            map(re.compile(r"\d+").findall, get_files_path(vowels, health)),
+        )
+    )

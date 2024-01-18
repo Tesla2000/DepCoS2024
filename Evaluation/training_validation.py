@@ -26,7 +26,7 @@ from Models.Augmentations import Augmentation
 
 def training_validation(
     device: torch.device,
-    vowels: list[Literal['a', 'i', 'u', 'all']],
+    vowels: list[Literal["a", "i", "u", "all"]],
     num_splits: int,
     batch_size: int,
     early_stopping_patience: int,
@@ -49,7 +49,7 @@ def training_validation(
         # ResNet18 https://discuss.pytorch.org/t/altering-resnet18-for-single-channel-images/29198/6
         if tuple(
             Config.results_folder.glob(
-                f"*{model.__name__}_{augmentation}_{fold}.pth"
+                f"*{model.__name__}_{''.join(vowels)}_{augmentation}.pth"
             )
         ):
             continue
@@ -62,11 +62,19 @@ def training_validation(
         train_patients = np.array(patients_ids)[train_idx]
         val_patients = np.array(patients_ids)[val_idx]
 
-        train_files = list(file for file in file_paths if re.findall(r'\d+', file)[0] in train_patients)
-        val_files = list(file for file in file_paths if re.findall(r'\d+', file)[0] in val_patients)
+        train_files = list(
+            file for file in file_paths if re.findall(r"\d+", file)[0] in train_patients
+        )
+        val_files = list(
+            file for file in file_paths if re.findall(r"\d+", file)[0] in val_patients
+        )
 
-        train_dataset = SpectrogramDataset(train_files, transforms, split_channels=len(vowels) > 1)
-        val_dataset = SpectrogramDataset(val_files, val_transforms, split_channels=len(vowels) > 1)
+        train_dataset = SpectrogramDataset(
+            train_files, transforms, split_channels=len(vowels) > 1
+        )
+        val_dataset = SpectrogramDataset(
+            val_files, val_transforms, split_channels=len(vowels) > 1
+        )
 
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
@@ -138,7 +146,7 @@ def training_validation(
                     torch.save(
                         best_model_weights,
                         Config.results_folder.joinpath(
-                            f"f1_{f1_scores[best_epoch]:.2f}_{model.__name__}_{augmentation}_{fold}_{learning_rate}.pth"
+                            f"f1_{f1_scores[best_epoch]:.2f}_{model.__name__}_{''.join(vowels)}_{augmentation}.pth"
                         ),
                     )
                     model.load_state_dict(best_model_weights)

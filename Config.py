@@ -11,15 +11,21 @@ from torchvision import models
 
 
 class Config:
-    sigma = .05
-    gamma = .9
+    device = None
+    sigma = 0.05
+    gamma = 0.9
     window_stride = 10
     window_size = 40
-    vowel = "a"
-    diseases = ("Rekurrensparese", "Dysphonie", "Funktionelle Dysphonie", "Hyperfunktionelle Dysphonie", "Laryngitis",)
+    diseases = (
+        "Rekurrensparese",
+        "Dysphonie",
+        "Funktionelle Dysphonie",
+        "Hyperfunktionelle Dysphonie",
+        "Laryngitis",
+    )
     base_models = (
         partial(models.vgg19, num_classes=1),
-        models.resnet18,
+        models.resnet101,
     )
     criterion = nn.BCELoss()
     num_splits = 1

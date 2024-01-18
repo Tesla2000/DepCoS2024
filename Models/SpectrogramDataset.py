@@ -46,7 +46,7 @@ class SpectrogramDataset(Dataset):
 
         Args:
             paths_to_audio (list): List of file paths to audio files.
-            transform (callable): A function/transform to apply to the spectrogram data.
+            transforms: Transformation to be applied first to audio, second to spectrogram.
             hop_length (int): Number of samples between successive frames.
             n_fft (int): Number of samples in each window.
             n_mels (int): Number of mel filterbanks.
@@ -66,7 +66,9 @@ class SpectrogramDataset(Dataset):
 
         # Extract and store sample information
         for audio_path in set(self.paths_to_audio):
-            sample_id = re.findall(r'\d+_\w' if split_channels else r'\d+', audio_path)[0]
+            sample_id = re.findall(r"\d+_\w" if split_channels else r"\d+", audio_path)[
+                0
+            ]
 
             self.samples[sample_id].label = int("Healthy" not in audio_path)
             self.samples[sample_id].audio_paths.append(audio_path)
