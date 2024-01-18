@@ -1,4 +1,3 @@
-import os
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -38,6 +37,7 @@ class SpectrogramDataset(Dataset):
         n_mels=128,
         fmin=0,
         fmax=None,
+        split_channels: bool = False,
     ):
         """
         Initializes the dataset.
@@ -62,7 +62,7 @@ class SpectrogramDataset(Dataset):
 
         # Extract and store sample information
         for audio_path in set(self.paths_to_audio):
-            sample_id = re.findall(r'\d+', audio_path)[0]
+            sample_id = re.findall(r'\d+_\w' if split_channels else r'\d+', audio_path)[0]
 
             self.samples[sample_id].label = int("Healthy" not in audio_path)
             self.samples[sample_id].audio_paths.append(audio_path)

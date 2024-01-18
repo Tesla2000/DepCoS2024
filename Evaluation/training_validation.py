@@ -65,8 +65,8 @@ def training_validation(
         train_files = list(file for file in file_paths if re.findall(r'\d+', file)[0] in train_patients)
         val_files = list(file for file in file_paths if re.findall(r'\d+', file)[0] in val_patients)
 
-        train_dataset = SpectrogramDataset(train_files, transform)
-        val_dataset = SpectrogramDataset(val_files, val_transform)
+        train_dataset = SpectrogramDataset(train_files, transform, split_channels=len(vowels) > 1)
+        val_dataset = SpectrogramDataset(val_files, val_transform, split_channels=len(vowels) > 1)
 
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
