@@ -96,6 +96,7 @@ def training_validation(
                 outputs = model(inputs)
                 target = labels.float().unsqueeze(1)
                 loss = criterion(outputs, target)
+                run.log({"train_loss": loss})
                 loss.backward()
                 optimizer.step()
 
@@ -136,6 +137,7 @@ def training_validation(
 
                     target = labels.float().unsqueeze(1)
                     loss = criterion(outputs, target)
+                    run.log({"val_loss": loss})
                     val_loss += loss.item()
 
                 val_loss /= len(val_loader)

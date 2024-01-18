@@ -30,7 +30,7 @@ traditional_iterable = product(
 
 
 spectrogram_training_iterable = product(
-    Config.base_models,
+    Config.model_creators,
     (
         ["a"],
         ["u"],
