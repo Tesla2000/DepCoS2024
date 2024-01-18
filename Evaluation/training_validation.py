@@ -1,122 +1,62 @@
+import re
 from copy import deepcopy
-from itertools import count, chain
-from pathlib import Path
-from typing import Callable, Type
+from itertools import count
+from typing import Callable, Literal
 
 import numpy as np
 import torch
 import torch.optim as optim
-import torchaudio.transforms as T
-import torchvision.transforms as transforms
+import wandb
 from sklearn.metrics import f1_score, precision_score, recall_score
-from sklearn.model_selection import StratifiedKFold
 from torch import nn
 from torch.nn.modules.loss import _Loss
-from torch.utils.data import DataLoader, Dataset
+from torch.optim import Optimizer
+from torch.optim.lr_scheduler import LRScheduler
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from Config import Config
+from Evaluation.get_paths import get_paths
+from Evaluation.get_transform import get_transform
 from Evaluation.utilities import (
-    get_patients_id,
-    get_files_path,
-    get_patient_id,
     to_device,
 )
 from Models import SpectrogramDataset
+from Models.Augmentations import Augmentation
 
 
 def training_validation(
-    device,
-    file_path: Path,
+    device: torch.device,
+    vowels: list[Literal["a", "i", "u", "all"]],
     num_splits: int,
     batch_size: int,
     early_stopping_patience: int,
     criterion: _Loss,
     model_creator: Callable[[], nn.Module],
     learning_rate: float,
-    augmentation: str,
-    dataset_type: Type[Dataset],
+    learning_rate_scheduler_creator: Callable[Optimizer, LRScheduler],
+    augmentation: Augmentation,
     random_state=42,
 ):
-    # Load patient IDs and file paths from a file
-    patients_ids = get_patients_id(file_path)
-    file_paths = get_files_path(file_path)
-
-    # Define augmentations
-    transform_no_augmentation = transforms.Compose(
-        [transforms.Resize((224, 224), antialias=None)]
-    )
-
-    def add_trailing_zeros(x):
-        zeros = torch.zeros((*x.shape[:-1], 500))
-        zeros[:, :, : x.shape[-1]] = x
-        return zeros
-
-    transform_pad_zeros = transforms.Compose([add_trailing_zeros])
-
-    transform_frequency_masking = transforms.Compose(
-        [
-            T.FrequencyMasking(freq_mask_param=50),
-            transforms.Resize((224, 224), antialias=None),
-        ]
-    )
-
-    transform_time_masking = transforms.Compose(
-        [
-            T.TimeMasking(time_mask_param=30),
-            transforms.Resize((224, 224), antialias=None),
-        ]
-    )
-
-    transform_combined_masking = transforms.Compose(
-        [
-            T.FrequencyMasking(freq_mask_param=50),
-            T.TimeMasking(time_mask_param=30),
-            transforms.Resize((224, 224), antialias=None),
-        ]
-    )
-
-    # Choose the desired augmentation
-    val_transform = transform_no_augmentation
-    if augmentation == "frequency_masking":
-        transform = transform_frequency_masking
-    elif augmentation == "time_masking":
-        transform = transform_time_masking
-    elif augmentation == "combined_masking":
-        transform = transform_combined_masking
-    elif augmentation == "pad_zeros":
-        transform = transform_pad_zeros
-        val_transform = transform_pad_zeros
-    elif augmentation == "resize":
-        transform = transform_no_augmentation
-    else:
-        transform = transforms.Compose([])
-        val_transform = transform
-    if num_splits == 1:
-        skf = StratifiedKFold(n_splits=2, shuffle=True, random_state=random_state)
-        cv_iterable = skf.split(patients_ids, [label for _, label in patients_ids])
-        next(cv_iterable)
-    else:
-        skf = StratifiedKFold(
-            n_splits=num_splits, shuffle=True, random_state=random_state
-        )
-        cv_iterable = skf.split(patients_ids, [label for _, label in patients_ids])
-
+    transforms, val_transforms = get_transform(augmentation)
+    cv_iterable, patients_ids, file_paths = get_paths(vowels, num_splits, random_state)
     for fold, (train_idx, val_idx) in enumerate(cv_iterable):
         model = model_creator().to(device)
+        run = wandb.init(project=f"{model.__name__}_{augmentation}")
+        run.watch(model)
         best_model_weights = None
         val_losses = []
 
         # ResNet18 https://discuss.pytorch.org/t/altering-resnet18-for-single-channel-images/29198/6
         if tuple(
             Config.results_folder.glob(
-                f"*{model.__name__}_{augmentation}_{fold}_{learning_rate}.pth"
+                f"*{model.__name__}_{''.join(vowels)}_{augmentation}.pth"
             )
         ):
             continue
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-
+        scheduler = learning_rate_scheduler_creator(optimizer)
         print(f"Fold {fold + 1}/{num_splits}")
 
         # Get train and validation patient IDs and file paths
@@ -124,22 +64,18 @@ def training_validation(
         val_patients = np.array(patients_ids)[val_idx]
 
         train_files = list(
-            chain.from_iterable(
-                [f"{Config.data_path}/{file}"]
-                if file.endswith("0")
-                else 4 * [f"{Config.data_path}/{file}"]
-                for file in file_paths
-                if get_patient_id(file)[0] in train_patients[:, 0]
-            )
+            file for file in file_paths if re.findall(r"\d+", file)[0] in train_patients
         )
-        val_files = [
-            f"{Config.data_path}/{file}"
-            for file in file_paths
-            if get_patient_id(file)[0] in val_patients[:, 0]
-        ]
+        val_files = list(
+            file for file in file_paths if re.findall(r"\d+", file)[0] in val_patients
+        )
 
-        train_dataset = dataset_type(train_files, transform)
-        val_dataset = dataset_type(val_files, val_transform)
+        train_dataset = SpectrogramDataset(
+            train_files, transforms, split_channels=len(vowels) > 1
+        )
+        val_dataset = SpectrogramDataset(
+            val_files, val_transforms, split_channels=len(vowels) > 1
+        )
 
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
@@ -160,10 +96,12 @@ def training_validation(
                 outputs = model(inputs)
                 target = labels.float().unsqueeze(1)
                 loss = criterion(outputs, target)
+                run.log({"train_loss": loss})
                 loss.backward()
                 optimizer.step()
 
                 total_loss += loss.item()
+            scheduler.step()
 
             train_loss = total_loss / len(train_loader)
 
@@ -199,6 +137,7 @@ def training_validation(
 
                     target = labels.float().unsqueeze(1)
                     loss = criterion(outputs, target)
+                    run.log({"val_loss": loss})
                     val_loss += loss.item()
 
                 val_loss /= len(val_loader)
@@ -210,7 +149,7 @@ def training_validation(
                     torch.save(
                         best_model_weights,
                         Config.results_folder.joinpath(
-                            f"f1_{f1_scores[best_epoch]:.2f}_{model.__name__}_{augmentation}_{fold}_{learning_rate}.pth"
+                            f"f1_{f1_scores[best_epoch]:.2f}_{model.__name__}_{''.join(vowels)}_{augmentation}.pth"
                         ),
                     )
                     model.load_state_dict(best_model_weights)
