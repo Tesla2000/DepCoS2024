@@ -40,7 +40,7 @@ if __name__ == "__main__":
             criterion=Config.criterion,
             model_creator=model_creation_function,
             learning_rate=Config.learning_rate,
+            learning_rate_scheduler_creator=Config.learning_rate_scheduler_creator,
             random_state=Config.random_state,
             augmentation=augmentation,
-            gamma=Config.gamma,
         )

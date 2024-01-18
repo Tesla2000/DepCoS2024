@@ -28,7 +28,9 @@ def _window_forward_wrapper(forward, window_size: int, window_stride: int):
                     )
                 )
             )
-            results[index] = torch.sigmoid(torch.mean(forward(windows)))
+            windows = forward(windows)
+            mean_windows = torch.mean(windows)
+            results[index] = torch.sigmoid(mean_windows)
         return results.unsqueeze(1).to(device)
 
     return inner

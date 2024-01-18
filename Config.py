@@ -7,6 +7,7 @@ from typing import NamedTuple
 import numpy as np
 import torch
 from torch import nn
+from torch.optim import lr_scheduler
 from torchvision import models
 
 
@@ -24,7 +25,6 @@ class Config:
         "Laryngitis",
     )
     base_models = (
-        models.resnet18,
         partial(models.vgg19, num_classes=1),
         models.resnet101,
     )
@@ -32,6 +32,8 @@ class Config:
     num_splits = 1
     early_stopping_patience = 3
     batch_size = 16
+    learning_rate_scheduler_creator = lambda optimizer: lr_scheduler.ExponentialLR(optimizer, gamma=.9)
+    learning_rate = 1e-4
     root_path = Path(".")
     data_path = root_path / "Data"
     session_time = datetime.now().strftime("%Y%m%d%H%M")
@@ -42,7 +44,6 @@ class Config:
     lists_path = data_path / "Lists"
     vowels_path = data_path / "Vowels"
     healthy_patients_folder = vowels_path / "Healthy"
-    learning_rate = 1e-5
     random_state = 42
 
 

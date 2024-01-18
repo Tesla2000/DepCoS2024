@@ -10,7 +10,8 @@ import wandb
 from sklearn.metrics import f1_score, precision_score, recall_score
 from torch import nn
 from torch.nn.modules.loss import _Loss
-from torch.optim import lr_scheduler
+from torch.optim import Optimizer
+from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -33,8 +34,8 @@ def training_validation(
     criterion: _Loss,
     model_creator: Callable[[], nn.Module],
     learning_rate: float,
+    learning_rate_scheduler_creator: Callable[Optimizer, LRScheduler],
     augmentation: Augmentation,
-    gamma: float,
     random_state=42,
 ):
     transforms, val_transforms = get_transform(augmentation)
@@ -55,7 +56,7 @@ def training_validation(
             continue
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-        scheduler = lr_scheduler.ExponentialLR(optimizer, gamma=gamma)
+        scheduler = learning_rate_scheduler_creator(optimizer)
         print(f"Fold {fold + 1}/{num_splits}")
 
         # Get train and validation patient IDs and file paths
@@ -99,7 +100,7 @@ def training_validation(
                 optimizer.step()
 
                 total_loss += loss.item()
-                scheduler.step()
+            scheduler.step()
 
             train_loss = total_loss / len(train_loader)
 
