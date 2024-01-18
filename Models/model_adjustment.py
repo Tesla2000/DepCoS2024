@@ -5,11 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch import tensor, Tensor
-from torchvision import transforms
 from torchvision.models import VGG, ResNet
-
-from Models.AudioModels import Cnn14
-from Models.LeNet5 import LeNet5
 
 
 def _window_forward_wrapper(forward, window_size: int, window_stride: int):
@@ -32,10 +28,7 @@ def _window_forward_wrapper(forward, window_size: int, window_stride: int):
                     )
                 )
             )
-            windows = forward(
-                transforms.Resize((224, 224), antialias=None)(windows).to(device)
-            )
-            results[index] = torch.sigmoid(torch.mean(windows))
+            results[index] = torch.sigmoid(torch.mean(forward(windows)))
         return results.unsqueeze(1).to(device)
 
     return inner
@@ -58,7 +51,7 @@ def adjust(
     def wrapper():
         model = model_creation_function()
         model.__name__ = "MultiChannel" if multichannel else "SingleChannel"
-        if isinstance(model, (LeNet5, ResNet)) and (
+        if isinstance(model, ResNet) and (
             (multichannel and model.conv1.in_channels != 3)
             or (not multichannel and model.conv1.in_channels != 1)
         ):
@@ -70,8 +63,6 @@ def adjust(
                 padding=model.conv1.padding,
                 bias=isinstance(model.conv1.bias, Tensor),
             )
-        elif isinstance(model, Cnn14):
-            return model
         elif isinstance(model, VGG) and (
             (multichannel and model.features[0].in_channels != 3)
             or (not multichannel and model.features[0].in_channels != 1)

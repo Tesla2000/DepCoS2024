@@ -1,7 +1,6 @@
 from copy import deepcopy
 from itertools import count, chain
-from pathlib import Path
-from typing import Callable, Type
+from typing import Callable, Literal
 
 import numpy as np
 import torch
@@ -12,7 +11,7 @@ from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.model_selection import StratifiedKFold
 from torch import nn
 from torch.nn.modules.loss import _Loss
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from Config import Config
@@ -22,27 +21,34 @@ from Evaluation.utilities import (
     get_patient_id,
     to_device,
 )
+from Models import SpectrogramDataset
+from Models.Augmentations import Augmentation
 
 
 def training_validation(
-    device,
-    file_path: Path,
+    device: torch.device,
+    vowels: list[Literal['a', 'i', 'u', 'all']],
     num_splits: int,
     batch_size: int,
     early_stopping_patience: int,
     criterion: _Loss,
     model_creator: Callable[[], nn.Module],
     learning_rate: float,
-    augmentation: str,
-    dataset_type: Type[Dataset],
+    augmentation: Augmentation,
     random_state=42,
 ):
-    # Load patient IDs and file paths from a file
-    patients_ids = get_patients_id(file_path)
-    file_paths = get_files_path(file_path)
+    patients_ids, file_paths = set(), set()
+    for vowel in vowels:
+        file_path = (
+            Config.lists_path
+            / f'Vowels_{vowel}_{Config.disease}.txt'
+        )
+        # Load patient IDs and file paths from a file
+        patients_ids += get_patients_id(file_path)
+        file_paths += get_files_path(file_path)
 
     # Define augmentations
-    transform_no_augmentation = transforms.Compose(
+    transform_resize = transforms.Compose(
         [transforms.Resize((224, 224), antialias=None)]
     )
 
@@ -76,18 +82,18 @@ def training_validation(
     )
 
     # Choose the desired augmentation
-    val_transform = transform_no_augmentation
-    if augmentation == "frequency_masking":
+    val_transform = transform_resize
+    if augmentation == Augmentation.FREQUENCY_MASKING:
         transform = transform_frequency_masking
-    elif augmentation == "time_masking":
+    elif augmentation == Augmentation.TIME_MASKING:
         transform = transform_time_masking
-    elif augmentation == "combined_masking":
+    elif augmentation == Augmentation.COMBINED_MASKING:
         transform = transform_combined_masking
-    elif augmentation == "pad_zeros":
+    elif augmentation == Augmentation.PAD_ZEROS:
         transform = transform_pad_zeros
         val_transform = transform_pad_zeros
-    elif augmentation == "resize":
-        transform = transform_no_augmentation
+    elif augmentation == Augmentation.RESIZE:
+        transform = transform_resize
     else:
         transform = transforms.Compose([])
         val_transform = transform
@@ -137,8 +143,8 @@ def training_validation(
             if get_patient_id(file)[0] in val_patients[:, 0]
         ]
 
-        train_dataset = dataset_type(train_files, transform)
-        val_dataset = dataset_type(val_files, val_transform)
+        train_dataset = SpectrogramDataset(train_files, transform)
+        val_dataset = SpectrogramDataset(val_files, val_transform)
 
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)

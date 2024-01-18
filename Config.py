@@ -9,15 +9,8 @@ import torch
 from torch import nn
 from torchvision import models
 
-from Models.AudioModels import Cnn14
-from Models.LeNet5 import LeNet5
-
 
 class Config:
-    waveform_model_creator = partial(Cnn14, sample_rate=32000, window_size=1024, mel_bins=64,
-                                     classes_num=1, hop_size=512,
-                                     fmin=0,
-                                     fmax=None, )
     vowel = "a"
     disease = "Rekurrensparese"
     base_models = (
@@ -36,6 +29,7 @@ class Config:
     summary_folder = data_path.joinpath(f"summaries/{session_time}")
     summary_folder.mkdir(exist_ok=True, parents=True)
     lists_path = data_path / "Lists"
+    learning_rate = 1e-5
     random_state = 42
 
 
