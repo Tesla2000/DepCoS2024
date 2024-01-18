@@ -1,18 +1,19 @@
-from typing import Literal
+from typing import Callable
 
+import numpy as np
 import torch
 import torchaudio.transforms as T
 import torchvision.transforms as transforms
+from torchvision.transforms import Compose
 
+from Config import Config
 from Models.Augmentations import Augmentation
 
 
 def get_transform(
     augmentation: Augmentation,
-):
-    # Load patient IDs and file paths from a file
-
-    # Define augmentations
+) -> tuple[tuple[Callable, Compose], tuple[Callable, Compose]]:
+    audio_transform = audio_val_transform = lambda y: y
     transform_resize = transforms.Compose(
         [transforms.Resize((224, 224), antialias=None)]
     )
@@ -46,20 +47,21 @@ def get_transform(
         ]
     )
 
-    # Choose the desired augmentation
-    val_transform = transform_resize
+    val_spectrogram_transform = transform_resize
     if augmentation == Augmentation.FREQUENCY_MASKING:
-        transform = transform_frequency_masking
+        spectrogram_transform = transform_frequency_masking
     elif augmentation == Augmentation.TIME_MASKING:
-        transform = transform_time_masking
+        spectrogram_transform = transform_time_masking
     elif augmentation == Augmentation.COMBINED_MASKING:
-        transform = transform_combined_masking
-    elif augmentation == Augmentation.PAD_ZEROS:
-        transform = transform_pad_zeros
-        val_transform = transform_pad_zeros
-    elif augmentation == Augmentation.RESIZE:
-        transform = transform_resize
+        spectrogram_transform = transform_combined_masking
+    elif augmentation in (Augmentation.PAD_ZEROS, Augmentation.ADD_NOISE_AND_PAD):
+        spectrogram_transform = transform_pad_zeros
+        val_spectrogram_transform = transform_pad_zeros
+    elif augmentation in (Augmentation.RESIZE, Augmentation.ADD_NOISE):
+        spectrogram_transform = transform_resize
     else:
-        transform = transforms.Compose([])
-        val_transform = transform
-    return transform, val_transform
+        spectrogram_transform = transforms.Compose([])
+        val_spectrogram_transform = spectrogram_transform
+    if augmentation in (Augmentation.ADD_NOISE, Augmentation.ADD_NOISE_AND_PAD):
+        audio_transform = lambda y: y + Config.sigma * np.mean(y) * np.random.normal(size=y)
+    return (audio_transform, spectrogram_transform), (audio_val_transform, val_spectrogram_transform)

@@ -11,6 +11,7 @@ from torchvision import models
 
 
 class Config:
+    sigma = .05
     gamma = .9
     window_stride = 10
     window_size = 40

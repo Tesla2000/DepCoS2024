@@ -37,7 +37,7 @@ def training_validation(
     gamma: float,
     random_state=42,
 ):
-    transform, val_transform = get_transform(augmentation)
+    transforms, val_transforms = get_transform(augmentation)
     cv_iterable, patients_ids, file_paths = get_paths(vowels, num_splits, random_state)
     for fold, (train_idx, val_idx) in enumerate(cv_iterable):
         model = model_creator().to(device)
@@ -65,8 +65,8 @@ def training_validation(
         train_files = list(file for file in file_paths if re.findall(r'\d+', file)[0] in train_patients)
         val_files = list(file for file in file_paths if re.findall(r'\d+', file)[0] in val_patients)
 
-        train_dataset = SpectrogramDataset(train_files, transform, split_channels=len(vowels) > 1)
-        val_dataset = SpectrogramDataset(val_files, val_transform, split_channels=len(vowels) > 1)
+        train_dataset = SpectrogramDataset(train_files, transforms, split_channels=len(vowels) > 1)
+        val_dataset = SpectrogramDataset(val_files, val_transforms, split_channels=len(vowels) > 1)
 
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
@@ -84,10 +84,7 @@ def training_validation(
                 inputs, labels = to_device(inputs, device), to_device(labels, device)
                 optimizer.zero_grad()
 
-                try:
-                    outputs = model(inputs)
-                except:
-                    continue
+                outputs = model(inputs)
                 target = labels.float().unsqueeze(1)
                 loss = criterion(outputs, target)
                 loss.backward()

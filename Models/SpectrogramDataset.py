@@ -2,6 +2,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Callable
 
 import librosa
 import librosa.display
@@ -12,6 +13,7 @@ from PIL import Image
 import torchvision.transforms as transforms
 from torch import Tensor
 from torch.utils.data import Dataset
+from torchvision.transforms import Compose
 
 matplotlib.use("agg")
 
@@ -31,7 +33,7 @@ class SpectrogramDataset(Dataset):
     def __init__(
         self,
         paths_to_audio,
-        transform=None,
+        transforms: tuple[Callable, Compose] = None,
         hop_length=512,
         n_fft=2048,
         n_mels=128,
@@ -52,7 +54,9 @@ class SpectrogramDataset(Dataset):
             fmax (float): Maximum frequency.
         """
         self.paths_to_audio = paths_to_audio
-        self.transform = transform
+        if transforms is None:
+            transforms = lambda x: x, None
+        self.audio_transform, self.spectrogram_transform = transforms
         self.samples = defaultdict(Sample)  # Dictionary to store sample information
         self.hop_length = hop_length
         self.n_fft = n_fft
@@ -94,7 +98,7 @@ class SpectrogramDataset(Dataset):
         self.samples[sample_id].log_mel_spec_dbs = []
         for audio_path in sorted(audio_paths):
             y, sr = librosa.load(audio_path, sr=None)
-
+            y = self.audio_transform(y)
             mel_spec = librosa.feature.melspectrogram(
                 y=y,
                 sr=sr,
@@ -109,12 +113,12 @@ class SpectrogramDataset(Dataset):
             max_val = log_mel_spec_db.max()
             scaled_img = (log_mel_spec_db - min_val) / (max_val - min_val)
 
-            if self.transform:
+            if self.spectrogram_transform:
                 pil_img = Image.fromarray(scaled_img)
 
                 pil_tensor = transforms.ToTensor()(pil_img)
 
-                pil_tensor = self.transform(pil_tensor)
+                pil_tensor = self.spectrogram_transform(pil_tensor)
 
                 log_mel_spec_db = np.array(pil_tensor)
 
