@@ -21,7 +21,7 @@ def _window_forward_wrapper(forward, window_size: int, window_stride: int):
             windows = tensor(
                 np.array(
                     tuple(
-                        sample[:, :, i: i + window_size].numpy()
+                        sample[:, :, i : i + window_size].numpy()
                         for i in range(
                             0, len(sample[0, -1]) - window_size, window_stride
                         )

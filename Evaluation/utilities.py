@@ -43,17 +43,21 @@ def get_files_path(
 ) -> set[str]:
     if health:
         return set(
-            str(audio_file)
-            for vowel in vowels
-            for audio_file in Config.healthy_patients_folder.iterdir()
-            if re.findall(rf"_{vowel}", audio_file.name) or vowel == "all"
+            dict(
+                (audio_file.name, str(audio_file))
+                for vowel in vowels
+                for audio_file in Config.healthy_patients_folder.iterdir()
+                if re.findall(rf"_{vowel}", audio_file.name) or vowel == "all"
+            ).values()
         )
     return set(
-        str(audio_file)
-        for vowel in vowels
-        for data_folder in Config.vowels_path.iterdir()
-        for audio_file in data_folder.iterdir()
-        if re.findall(rf"_{vowel}", audio_file.name) or vowel == "all"
+        dict(
+            (audio_file.name, str(audio_file))
+            for vowel in vowels
+            for data_folder in Config.vowels_path.iterdir()
+            for audio_file in data_folder.iterdir()
+            if re.findall(rf"_{vowel}", audio_file.name) or vowel == "all"
+        ).values()
     )
 
 
