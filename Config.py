@@ -24,6 +24,7 @@ class Config:
         "Laryngitis",
     )
     base_models = (
+        models.resnet18,
         partial(models.vgg19, num_classes=1),
         models.resnet101,
     )
