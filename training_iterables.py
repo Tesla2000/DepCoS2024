@@ -29,6 +29,6 @@ traditional_iterable = product(
 
 spectrogram_training_iterable = product(
     Config.base_models,
-    (["a"], ["u"], ["i"], ["a", "u", "i"], ["all"]),
+    (["a", "u", "i"], ["all"], ["a"], ["u"], ["i"],),
     chain.from_iterable((window_iterable, traditional_iterable,)),
 )

@@ -1,6 +1,6 @@
 import re
 from copy import deepcopy
-from itertools import count, chain
+from itertools import count
 from typing import Callable, Literal
 
 import numpy as np
@@ -18,7 +18,6 @@ from Config import Config
 from Evaluation.get_paths import get_paths
 from Evaluation.get_transform import get_transform
 from Evaluation.utilities import (
-    get_patient_id,
     to_device,
 )
 from Models import SpectrogramDataset
