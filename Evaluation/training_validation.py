@@ -42,8 +42,6 @@ def training_validation(
     cv_iterable, patients_ids, file_paths = get_paths(vowels, num_splits, random_state)
     for fold, (train_idx, val_idx) in enumerate(cv_iterable):
         model = model_creator().to(device)
-        run = wandb.init(project=f"{model.__name__}_{augmentation}")
-        run.watch(model)
         best_model_weights = None
         val_losses = []
 
@@ -54,6 +52,8 @@ def training_validation(
             )
         ):
             continue
+        run = wandb.init(reinit=True, project=f"{model.__name__}_{augmentation}")
+        run.watch(model)
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
         scheduler = learning_rate_scheduler_creator(optimizer)
@@ -85,11 +85,7 @@ def training_validation(
             model.train()
             total_loss = 0.0
 
-            for batch_idx, (inputs, labels) in tqdm(
-                enumerate(train_loader),
-                f"Training epoch {epoch + 1}...",
-                len(train_loader),
-            ):
+            for batch_idx, (inputs, labels) in enumerate(train_loader):
                 inputs, labels = to_device(inputs, device), to_device(labels, device)
                 optimizer.zero_grad()
 
@@ -137,7 +133,6 @@ def training_validation(
 
                     target = labels.float().unsqueeze(1)
                     loss = criterion(outputs, target)
-                    run.log({"val_loss": loss})
                     val_loss += loss.item()
 
                 val_loss /= len(val_loader)
@@ -159,7 +154,10 @@ def training_validation(
                 all_predicted = np.concatenate(all_predicted)
 
                 f1 = f1_score(all_labels, all_predicted, zero_division=0.0)
-                f1_scores.append(f1)
+                run.log({
+                    "val_loss": loss,
+                    "f1": f1,
+                })
                 precision = precision_score(
                     all_labels, all_predicted, zero_division=0.0
                 )
