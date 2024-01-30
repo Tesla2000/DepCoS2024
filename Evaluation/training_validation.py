@@ -85,11 +85,7 @@ def training_validation(
             model.train()
             total_loss = 0.0
 
-            for batch_idx, (inputs, labels) in tqdm(
-                enumerate(train_loader),
-                f"Training epoch {epoch + 1}...",
-                len(train_loader),
-            ):
+            for batch_idx, (inputs, labels) in enumerate(train_loader):
                 inputs, labels = to_device(inputs, device), to_device(labels, device)
                 optimizer.zero_grad()
 
