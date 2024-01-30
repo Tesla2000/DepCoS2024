@@ -133,7 +133,6 @@ def training_validation(
 
                     target = labels.float().unsqueeze(1)
                     loss = criterion(outputs, target)
-                    # run.log({"val_loss": loss})
                     val_loss += loss.item()
 
                 val_loss /= len(val_loader)
@@ -155,7 +154,10 @@ def training_validation(
                 all_predicted = np.concatenate(all_predicted)
 
                 f1 = f1_score(all_labels, all_predicted, zero_division=0.0)
-                f1_scores.append(f1)
+                run.log({
+                    "val_loss": loss,
+                    "f1": f1,
+                })
                 precision = precision_score(
                     all_labels, all_predicted, zero_division=0.0
                 )
