@@ -42,8 +42,6 @@ def training_validation(
     cv_iterable, patients_ids, file_paths = get_paths(vowels, num_splits, random_state)
     for fold, (train_idx, val_idx) in enumerate(cv_iterable):
         model = model_creator().to(device)
-        run = wandb.init(project=f"{model.__name__}_{augmentation}")
-        run.watch(model)
         best_model_weights = None
         val_losses = []
 
@@ -54,6 +52,8 @@ def training_validation(
             )
         ):
             continue
+        run = wandb.init(reinit=True, project=f"{model.__name__}_{augmentation}")
+        run.watch(model)
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
         scheduler = learning_rate_scheduler_creator(optimizer)
@@ -137,7 +137,7 @@ def training_validation(
 
                     target = labels.float().unsqueeze(1)
                     loss = criterion(outputs, target)
-                    run.log({"val_loss": loss})
+                    # run.log({"val_loss": loss})
                     val_loss += loss.item()
 
                 val_loss /= len(val_loader)

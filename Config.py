@@ -24,12 +24,11 @@ class Config:
         "Laryngitis",
     )
     model_creators = (
-        partial(models.vgg19, num_classes=1),
-        models.resnet101,
+        models.resnet18,
     )
     criterion = nn.BCELoss()
     num_splits = 1
-    early_stopping_patience = 3
+    early_stopping_patience = 5
     batch_size = 16
     learning_rate_scheduler_creator = lambda optimizer: lr_scheduler.ExponentialLR(optimizer, gamma=.9)
     learning_rate = 1e-5
