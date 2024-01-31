@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from zipfile import ZipFile
 
 from Config import Config
@@ -21,6 +22,7 @@ if __name__ == "__main__":
 
     if Config.device is None:
         Config.device = check_cuda_availability()
+    project_name = datetime.now().strftime('%Y%m%d%H%M')
 
     for (
         model_creation_function,
@@ -43,4 +45,5 @@ if __name__ == "__main__":
             learning_rate_scheduler_creator=Config.learning_rate_scheduler_creator,
             random_state=Config.random_state,
             augmentation=augmentation,
+            project_name=project_name,
         )

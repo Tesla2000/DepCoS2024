@@ -13,7 +13,6 @@ from torch.nn.modules.loss import _Loss
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
-from tqdm import tqdm
 
 from Config import Config
 from Evaluation.get_paths import get_paths
@@ -36,6 +35,7 @@ def training_validation(
     learning_rate: float,
     learning_rate_scheduler_creator: Callable[Optimizer, LRScheduler],
     augmentation: Augmentation,
+    project_name: str,
     random_state=42,
 ):
     transforms, val_transforms = get_transform(augmentation)
@@ -52,7 +52,7 @@ def training_validation(
             )
         ):
             continue
-        run = wandb.init(reinit=True, project=f"{model.__name__}_{augmentation}")
+        run = wandb.init(reinit=True, project=project_name, id=f"{model.__name__}_{augmentation}")
         run.watch(model)
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
