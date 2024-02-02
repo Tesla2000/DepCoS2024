@@ -63,6 +63,7 @@ class SpectrogramDataset(Dataset):
         self.n_mels = n_mels
         self.fmin = fmin
         self.fmax = fmax
+        self.spectrograms = dict()
 
         # Extract and store sample information
         for audio_path in set(self.paths_to_audio):
@@ -99,21 +100,25 @@ class SpectrogramDataset(Dataset):
 
         self.samples[sample_id].log_mel_spec_dbs = []
         for audio_path in sorted(audio_paths):
-            y, sr = librosa.load(audio_path, sr=None)
-            y = self.audio_transform(y)
-            mel_spec = librosa.feature.melspectrogram(
-                y=y,
-                sr=sr,
-                hop_length=self.hop_length,
-                n_fft=self.n_fft,
-                n_mels=self.n_mels,
-                fmin=self.fmin,
-                fmax=self.fmax,
-            )
-            log_mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
-            min_val = log_mel_spec_db.min()
-            max_val = log_mel_spec_db.max()
-            scaled_img = (log_mel_spec_db - min_val) / (max_val - min_val)
+            if self.spectrograms.get(audio_path):
+                scaled_img = self.spectrograms[audio_path]
+            else:
+                y, sr = librosa.load(audio_path, sr=None)
+                y = self.audio_transform(y)
+                mel_spec = librosa.feature.melspectrogram(
+                    y=y,
+                    sr=sr,
+                    hop_length=self.hop_length,
+                    n_fft=self.n_fft,
+                    n_mels=self.n_mels,
+                    fmin=self.fmin,
+                    fmax=self.fmax,
+                )
+                log_mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
+                min_val = log_mel_spec_db.min()
+                max_val = log_mel_spec_db.max()
+                scaled_img = (log_mel_spec_db - min_val) / (max_val - min_val)
+                self.spectrograms[audio_path] = scaled_img
 
             if self.spectrogram_transform:
                 pil_img = Image.fromarray(scaled_img)

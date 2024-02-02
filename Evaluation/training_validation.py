@@ -92,7 +92,9 @@ def training_validation(
                 outputs = model(inputs)
                 target = labels.float().unsqueeze(1)
                 loss = criterion(outputs, target)
-                run.log({"train_loss": loss})
+                run.log({
+                    "train_loss": loss,
+                })
                 loss.backward()
                 optimizer.step()
 
@@ -155,15 +157,19 @@ def training_validation(
 
                 f1 = f1_score(all_labels, all_predicted, zero_division=0.0)
                 f1_scores.append(f1)
-                run.log({
-                    "val_loss": loss,
-                    "f1_score": f1,
-                })
                 precision = precision_score(
                     all_labels, all_predicted, zero_division=0.0
                 )
                 recall = recall_score(all_labels, all_predicted, zero_division=0.0)
                 accuracy = correct / total
+                run.log({
+                    "val_loss": loss,
+                    "f1_score": f1,
+                    "lr": optimizer.param_groups[0]['lr'],
+                    "precision": precision,
+                    "recall": recall,
+                    "accuracy": accuracy,
+                })
 
             print(
                 f"Epoch [{epoch + 1}], Train loss: {train_loss:.2f}, Validation loss: {val_loss:.2f}, Accuracy: {100 * accuracy:.2f}%, F1-score: {f1:.3f}, Precision: {precision:.3f}, Recall: {recall:.3f}"
