@@ -100,7 +100,7 @@ class SpectrogramDataset(Dataset):
 
         self.samples[sample_id].log_mel_spec_dbs = []
         for audio_path in sorted(audio_paths):
-            if self.spectrograms.get(audio_path):
+            if self.spectrograms.get(audio_path) is not None:
                 scaled_img = np.copy(self.spectrograms[audio_path])
             else:
                 y, sr = librosa.load(audio_path, sr=None)
