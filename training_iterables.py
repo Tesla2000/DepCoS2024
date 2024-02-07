@@ -33,15 +33,15 @@ spectrogram_training_iterable = product(
     Config.model_creators,
     (
         ["a"],
-        # ["u"],
-        # ["i"],
+        ["u"],
+        ["i"],
         ["all"],
         ["a", "u", "i"],
     ),
     chain.from_iterable(
         (
             traditional_iterable,
-            # window_iterable,
+            window_iterable,
         )
     ),
 )
