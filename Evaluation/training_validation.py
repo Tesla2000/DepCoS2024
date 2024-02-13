@@ -52,7 +52,7 @@ def training_validation(
             )
         ):
             continue
-        run = wandb.init(entity="depcos2024", reinit=True, project=project_name, id=f"{model.__name__}_{augmentation}")
+        run = wandb.init(entity="depcos2024", reinit=True, project=project_name, id=f"{model.__name__}_{''.join(vowels)}_{augmentation}")
         run.watch(model)
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
