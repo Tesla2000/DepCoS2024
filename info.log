@@ -1,0 +1,105 @@
+-rw-r--r-- 1 root root 170650728 Feb  2 03:42 f1_0.00_SingleChannelTraditionalResNet_aui_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 170654848 Feb  9 21:55 f1_0.03_SingleChannelWindowResNet_a_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 170643088 Feb  9 22:06 f1_0.09_SingleChannelWindowResNet_u_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 170691022 Feb  9 22:21 f1_0.60_SingleChannelTraditionalResNet_i_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 170668806 Feb  9 22:47 f1_0.61_MultiChannelWindowResNet_all_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 170656172 Feb 10 00:02 f1_0.62_SingleChannelWindowResNet_aui_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 558309328 Feb  1 23:21 f1_0.64_SingleChannelTraditionalVGG_aui_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 170643088 Feb  9 22:30 f1_0.64_SingleChannelWindowResNet_i_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 170680630 Feb  9 23:04 f1_0.65_MultiChannelWindowResNet_all_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 558309370 Feb  1 20:58 f1_0.65_SingleChannelTraditionalVGG_aui_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 170643088 Feb  9 21:47 f1_0.65_SingleChannelWindowResNet_a_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 170644348 Feb  9 23:31 f1_0.65_SingleChannelWindowResNet_aui_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 558308612 Feb  9 13:16 f1_0.65_SingleChannelWindowVGG_a_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 558308948 Jan 31 11:43 f1_0.66_SingleChannelTraditionalVGG_a_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 558309032 Feb  1 22:06 f1_0.66_SingleChannelTraditionalVGG_aui_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 558308948 Feb  9 13:44 f1_0.66_SingleChannelWindowVGG_a_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 558313598 Feb  1 16:34 f1_0.67_MultiChannelTraditionalVGG_all_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 558308780 Feb  2 01:27 f1_0.67_SingleChannelTraditionalVGG_aui_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 170654848 Feb  9 22:38 f1_0.67_SingleChannelWindowResNet_i_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 558313598 Feb  9 20:01 f1_0.68_MultiChannelWindowVGG_all_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 558313262 Feb  9 19:44 f1_0.68_MultiChannelWindowVGG_all_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 558308696 Feb  1 13:24 f1_0.68_SingleChannelTraditionalVGG_a_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 558308906 Feb  2 02:23 f1_0.68_SingleChannelTraditionalVGG_aui_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 558308696 Feb  9 18:48 f1_0.68_SingleChannelTraditionalVGG_i_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 170654848 Feb  9 22:20 f1_0.68_SingleChannelWindowResNet_u_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 170678612 Feb  2 03:10 f1_0.69_MultiChannelTraditionalResNet_all_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 170716110 Feb  2 02:58 f1_0.69_MultiChannelTraditionalResNet_all_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 170717124 Feb  2 02:47 f1_0.69_MultiChannelTraditionalResNet_all_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 170670066 Feb  2 03:04 f1_0.69_MultiChannelTraditionalResNet_all_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 170680630 Feb  2 02:52 f1_0.69_MultiChannelTraditionalResNet_all_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 558313472 Feb  1 20:05 f1_0.69_MultiChannelTraditionalVGG_all_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 558313894 Feb  1 17:40 f1_0.69_MultiChannelTraditionalVGG_all_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 170652702 Feb  2 02:41 f1_0.69_SingleChannelTraditionalResNet_a_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 170685976 Feb  2 02:34 f1_0.69_SingleChannelTraditionalResNet_a_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 170691022 Feb  2 02:26 f1_0.69_SingleChannelTraditionalResNet_a_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 170644348 Feb  2 02:37 f1_0.69_SingleChannelTraditionalResNet_a_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 170654848 Feb  2 02:29 f1_0.69_SingleChannelTraditionalResNet_a_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 170654154 Feb  2 03:51 f1_0.69_SingleChannelTraditionalResNet_aui_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 170692036 Feb  2 03:34 f1_0.69_SingleChannelTraditionalResNet_aui_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 170692666 Feb  2 03:18 f1_0.69_SingleChannelTraditionalResNet_aui_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 170656172 Feb  2 03:26 f1_0.69_SingleChannelTraditionalResNet_aui_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 170652702 Feb  9 22:22 f1_0.69_SingleChannelTraditionalResNet_i_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 170685976 Feb  9 22:22 f1_0.69_SingleChannelTraditionalResNet_i_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 170644348 Feb  9 22:22 f1_0.69_SingleChannelTraditionalResNet_i_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 170654848 Feb  9 22:21 f1_0.69_SingleChannelTraditionalResNet_i_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 170652702 Feb  9 21:58 f1_0.69_SingleChannelTraditionalResNet_u_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 170685976 Feb  9 21:57 f1_0.69_SingleChannelTraditionalResNet_u_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 170691022 Feb  9 21:56 f1_0.69_SingleChannelTraditionalResNet_u_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 170644348 Feb  9 21:57 f1_0.69_SingleChannelTraditionalResNet_u_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 170654848 Feb  9 21:56 f1_0.69_SingleChannelTraditionalResNet_u_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 558308822 Feb  1 14:11 f1_0.69_SingleChannelTraditionalVGG_a_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 558309180 Jan 31 13:10 f1_0.69_SingleChannelTraditionalVGG_a_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 558309286 Jan 31 11:18 f1_0.69_SingleChannelTraditionalVGG_a_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 558308822 Feb  9 18:53 f1_0.69_SingleChannelTraditionalVGG_i_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 558309286 Feb  9 15:32 f1_0.69_SingleChannelTraditionalVGG_i_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 558309180 Feb  9 14:02 f1_0.69_SingleChannelTraditionalVGG_u_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 558309286 Feb  9 13:50 f1_0.69_SingleChannelTraditionalVGG_u_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 558308948 Feb  9 13:56 f1_0.69_SingleChannelTraditionalVGG_u_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 558308948 Feb  9 19:20 f1_0.69_SingleChannelWindowVGG_i_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 558308612 Feb  9 19:04 f1_0.69_SingleChannelWindowVGG_i_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 558313936 Feb  1 15:23 f1_0.70_MultiChannelTraditionalVGG_all_Augmentation.FREQUENCY_MASKING.pth
+-rw-r--r-- 1 root root 558313346 Feb  1 18:49 f1_0.70_MultiChannelTraditionalVGG_all_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 558309180 Feb  9 15:44 f1_0.70_SingleChannelTraditionalVGG_i_Augmentation.COMBINED_MASKING.pth
+-rw-r--r-- 1 root root 558308948 Feb  9 15:38 f1_0.70_SingleChannelTraditionalVGG_i_Augmentation.TIME_MASKING.pth
+-rw-r--r-- 1 root root 558308696 Feb  9 14:08 f1_0.70_SingleChannelTraditionalVGG_u_Augmentation.RESIZE.pth
+-rw-r--r-- 1 root root 558308948 Feb  9 15:26 f1_0.70_SingleChannelWindowVGG_u_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 558308822 Feb  9 14:15 f1_0.71_SingleChannelTraditionalVGG_u_Augmentation.ADD_NOISE.pth
+-rw-r--r-- 1 root root 558309032 Feb  9 21:36 f1_0.71_SingleChannelWindowVGG_aui_Augmentation.ADD_NOISE_AND_PAD.pth
+-rw-r--r-- 1 root root 558308696 Feb  9 20:36 f1_0.71_SingleChannelWindowVGG_aui_Augmentation.PAD_ZEROS.pth
+-rw-r--r-- 1 root root 558308612 Feb  9 14:50 f1_0.71_SingleChannelWindowVGG_u_Augmentation.PAD_ZEROS.pth
+f1_0.66_SingleChannelTraditionalResNet_aui_Augmentation.ADD_NOISE.pth
+f1_0.66_SingleChannelTraditionalResNet_u_Augmentation.COMBINED_MASKING.pth
+f1_0.68_SingleChannelTraditionalResNet_u_Augmentation.FREQUENCY_MASKING.pth
+f1_0.69_SingleChannelTraditionalResNet_i_Augmentation.COMBINED_MASKING.pth
+f1_0.69_SingleChannelTraditionalResNet_i_Augmentation.TIME_MASKING.pth
+f1_0.69_SingleChannelTraditionalResNet_u_Augmentation.ADD_NOISE.pth
+f1_0.69_SingleChannelTraditionalResNet_u_Augmentation.RESIZE.pth
+f1_0.70_MultiChannelTraditionalResNet_all_Augmentation.ADD_NOISE.pth
+f1_0.70_SingleChannelTraditionalResNet_aui_Augmentation.TIME_MASKING.pth
+f1_0.70_SingleChannelTraditionalResNet_u_Augmentation.TIME_MASKING.pth
+f1_0.70_SingleChannelWindowResNet_aui_Augmentation.ADD_NOISE_AND_PAD.pth
+f1_0.70_SingleChannelWindowResNet_i_Augmentation.PAD_ZEROS.pth
+f1_0.70_SingleChannelWindowResNet_u_Augmentation.PAD_ZEROS.pth
+f1_0.71_SingleChannelTraditionalResNet_aui_Augmentation.FREQUENCY_MASKING.pth
+f1_0.71_SingleChannelTraditionalResNet_i_Augmentation.FREQUENCY_MASKING.pth
+f1_0.71_SingleChannelTraditionalResNet_i_Augmentation.RESIZE.pth
+f1_0.72_MultiChannelTraditionalResNet_all_Augmentation.COMBINED_MASKING.pth
+f1_0.72_MultiChannelTraditionalResNet_all_Augmentation.TIME_MASKING.pth
+f1_0.72_MultiChannelWindowResNet_all_Augmentation.PAD_ZEROS.pth
+f1_0.72_SingleChannelTraditionalResNet_a_Augmentation.TIME_MASKING.pth
+f1_0.72_SingleChannelTraditionalResNet_aui_Augmentation.COMBINED_MASKING.pth
+f1_0.72_SingleChannelWindowResNet_aui_Augmentation.PAD_ZEROS.pth
+f1_0.72_SingleChannelWindowResNet_u_Augmentation.ADD_NOISE_AND_PAD.pth
+f1_0.73_MultiChannelTraditionalResNet_all_Augmentation.RESIZE.pth
+f1_0.73_MultiChannelWindowResNet_all_Augmentation.ADD_NOISE_AND_PAD.pth
+f1_0.73_SingleChannelTraditionalResNet_aui_Augmentation.RESIZE.pth
+f1_0.73_SingleChannelTraditionalResNet_i_Augmentation.ADD_NOISE.pth
+f1_0.73_SingleChannelWindowResNet_i_Augmentation.ADD_NOISE_AND_PAD.pth
+f1_0.74_MultiChannelTraditionalResNet_all_Augmentation.FREQUENCY_MASKING.pth
+f1_0.74_SingleChannelTraditionalResNet_a_Augmentation.COMBINED_MASKING.pth
+f1_0.74_SingleChannelWindowResNet_a_Augmentation.ADD_NOISE_AND_PAD.pth
+f1_0.75_SingleChannelTraditionalResNet_a_Augmentation.FREQUENCY_MASKING.pth
+f1_0.76_SingleChannelTraditionalResNet_a_Augmentation.ADD_NOISE.pth
+f1_0.76_SingleChannelTraditionalResNet_a_Augmentation.RESIZE.pth
+f1_0.76_SingleChannelWindowResNet_a_Augmentation.PAD_ZEROS.pth
