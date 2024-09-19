@@ -27,7 +27,7 @@ class Config:
     )
     model_creators = (
         lambda: timm.create_model('deit_tiny_patch16_224', num_classes=1),
-        # models.efficientnet_b2,
+        models.efficientnet_b2,
         # models.resnet18,
         # partial(models.vgg19, num_classes=1),
         # models.resnet101,
