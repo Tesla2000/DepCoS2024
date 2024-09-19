@@ -9,6 +9,7 @@ import torch
 from torch import nn
 from torch.optim import lr_scheduler
 from torchvision import models
+from torchvision.models import EfficientNet_B2_Weights
 
 
 class Config:
@@ -24,9 +25,10 @@ class Config:
         "Laryngitis",
     )
     model_creators = (
+        models.efficientnet_b2,
         # models.resnet18,
-        partial(models.vgg19, num_classes=1),
-        models.resnet101,
+        # partial(models.vgg19, num_classes=1),
+        # models.resnet101,
     )
     criterion = nn.BCELoss()
     num_splits = 1
