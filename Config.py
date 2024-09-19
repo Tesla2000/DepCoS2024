@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 import numpy as np
+import timm
 import torch
 from torch import nn
 from torch.optim import lr_scheduler
@@ -25,7 +26,8 @@ class Config:
         "Laryngitis",
     )
     model_creators = (
-        models.efficientnet_b2,
+        lambda: timm.create_model('deit_tiny_patch16_224', num_classes=1),
+        # models.efficientnet_b2,
         # models.resnet18,
         # partial(models.vgg19, num_classes=1),
         # models.resnet101,

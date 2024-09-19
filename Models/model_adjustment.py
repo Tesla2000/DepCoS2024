@@ -4,6 +4,7 @@ from typing import Callable
 import numpy as np
 import torch
 import torch.nn as nn
+from timm.models import VisionTransformer
 from torch import tensor, Tensor
 from torchvision.models import VGG, ResNet, EfficientNet
 
@@ -93,10 +94,22 @@ def adjust(
                 first_layer[0].padding,
                 first_layer[0].dilation,
                 first_layer[0].groups,
-                first_layer[0].bias,
+                first_layer[0].bias is not None,
                 first_layer[0].padding_mode,
             )
             model.features[0] = first_layer
+        elif isinstance(model, VisionTransformer):
+            model.patch_embed.proj = nn.Conv2d(
+                1 + 2 * multichannel,
+                model.patch_embed.proj.out_channels,
+                model.patch_embed.proj.kernel_size,
+                model.patch_embed.proj.stride,
+                model.patch_embed.proj.padding,
+                model.patch_embed.proj.dilation,
+                model.patch_embed.proj.groups,
+                model.patch_embed.proj.bias is not None,
+                model.patch_embed.proj.padding_mode,
+            )
         elif not isinstance(model, VGG):
             model.fc = nn.Linear(model.fc.in_features, 1)
 
