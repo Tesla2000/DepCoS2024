@@ -7,6 +7,7 @@ import torch.nn as nn
 from timm.models import VisionTransformer
 from torch import tensor, Tensor
 from torchvision.models import VGG, ResNet, EfficientNet
+import torch.nn.functional as F
 
 
 def _window_forward_wrapper(forward, window_size: int, window_stride: int):
@@ -29,6 +30,11 @@ def _window_forward_wrapper(forward, window_size: int, window_stride: int):
                     )
                 )
             ).to(device)
+            windows = F.interpolate(windows,
+                                           size=(224, 224),
+                                           mode='bilinear',
+                                           align_corners=False)
+
             windows = forward(windows)
             mean_windows = torch.mean(windows)
             results[index] = torch.sigmoid(mean_windows)

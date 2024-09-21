@@ -1,6 +1,5 @@
 import random
 from datetime import datetime
-from functools import partial
 from pathlib import Path
 from typing import NamedTuple
 
@@ -10,7 +9,6 @@ import torch
 from torch import nn
 from torch.optim import lr_scheduler
 from torchvision import models
-from torchvision.models import EfficientNet_B2_Weights
 
 
 class Config:
