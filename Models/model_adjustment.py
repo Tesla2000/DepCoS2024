@@ -4,8 +4,10 @@ from typing import Callable
 import numpy as np
 import torch
 import torch.nn as nn
+from timm.models import VisionTransformer
 from torch import tensor, Tensor
-from torchvision.models import VGG, ResNet
+from torchvision.models import VGG, ResNet, EfficientNet
+import torch.nn.functional as F
 
 
 def _window_forward_wrapper(forward, window_size: int, window_stride: int):
@@ -28,6 +30,11 @@ def _window_forward_wrapper(forward, window_size: int, window_stride: int):
                     )
                 )
             ).to(device)
+            windows = F.interpolate(windows,
+                                           size=(224, 224),
+                                           mode='bilinear',
+                                           align_corners=False)
+
             windows = forward(windows)
             mean_windows = torch.mean(windows)
             results[index] = torch.sigmoid(mean_windows)
@@ -70,14 +77,46 @@ def adjust(
             or (not multichannel and model.features[0].in_channels != 1)
         ):
             model.features[0] = nn.Conv2d(
-                3 if multichannel else 1,
+                1 + 2 * multichannel,
                 out_channels=model.features[0].out_channels,
                 kernel_size=model.features[0].kernel_size,
                 stride=model.features[0].stride,
                 padding=model.features[0].padding,
                 bias=isinstance(model.features[0].bias, Tensor),
             )
-        if not isinstance(model, VGG):
+        elif isinstance(model, EfficientNet):
+            last = model.classifier[-1]
+            model.classifier[-1] = nn.Linear(
+                in_features=last.in_features,
+                out_features=1,
+                bias=last.bias is not None,
+            )
+            first_layer = model.features[0]
+            first_layer[0] = nn.Conv2d(
+                1 + 2 * multichannel,
+                first_layer[0].out_channels,
+                first_layer[0].kernel_size,
+                first_layer[0].stride,
+                first_layer[0].padding,
+                first_layer[0].dilation,
+                first_layer[0].groups,
+                first_layer[0].bias is not None,
+                first_layer[0].padding_mode,
+            )
+            model.features[0] = first_layer
+        elif isinstance(model, VisionTransformer):
+            model.patch_embed.proj = nn.Conv2d(
+                1 + 2 * multichannel,
+                model.patch_embed.proj.out_channels,
+                model.patch_embed.proj.kernel_size,
+                model.patch_embed.proj.stride,
+                model.patch_embed.proj.padding,
+                model.patch_embed.proj.dilation,
+                model.patch_embed.proj.groups,
+                model.patch_embed.proj.bias is not None,
+                model.patch_embed.proj.padding_mode,
+            )
+        elif not isinstance(model, VGG):
             model.fc = nn.Linear(model.fc.in_features, 1)
 
         model.forward = (

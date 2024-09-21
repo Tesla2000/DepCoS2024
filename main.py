@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 from zipfile import ZipFile
 
+from dotenv import load_dotenv
+
 from Config import Config
 from Evaluation.training_validation import training_validation
 from Evaluation.utilities import check_cuda_availability
@@ -9,6 +11,7 @@ from Models.model_adjustment import adjust
 from training_iterables import spectrogram_training_iterable
 
 if __name__ == "__main__":
+    load_dotenv()
     if not Config.vowels_path.exists():
         print("Downloading data...")
         zip_path = Config.data_path / "Vowels.zip"
