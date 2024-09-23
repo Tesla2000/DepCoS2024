@@ -24,7 +24,7 @@ class Config:
         "Laryngitis",
     )
     model_creators = (
-        lambda: timm.create_model('deit_tiny_patch16_224', num_classes=1),
+        # lambda: timm.create_model('deit_tiny_patch16_224', num_classes=1),
         models.efficientnet_b2,
         # models.resnet18,
         # partial(models.vgg19, num_classes=1),
@@ -35,7 +35,7 @@ class Config:
     early_stopping_patience = 5
     batch_size = 16
     learning_rate_scheduler_creator = lambda optimizer: lr_scheduler.ExponentialLR(optimizer, gamma=.9)
-    learning_rate = 2e-5
+    learning_rate = 2e-4
     root_path = Path('.')
     data_path = root_path / "Data"
     session_time = datetime.now().strftime("%Y%m%d%H%M")

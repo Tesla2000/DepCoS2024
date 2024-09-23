@@ -40,7 +40,7 @@ spectrogram_training_iterable = product(
     ),
     chain.from_iterable(
         (
-            traditional_iterable,
+            # traditional_iterable,
             window_iterable,
         )
     ),
