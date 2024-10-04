@@ -26,7 +26,7 @@ class Config:
     model_creators = (
         # models.resnet18,
         partial(models.vgg19, num_classes=1),
-        models.resnet101,
+        # models.resnet101,
     )
     criterion = nn.BCELoss()
     num_splits = 1
