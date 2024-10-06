@@ -48,6 +48,8 @@ class Config:
     summary_folder.mkdir(exist_ok=True, parents=True)
     lists_path = data_path / "Lists"
     vowels_path = data_path / "Vowels"
+    grad_cam_path = data_path / "GradCam"
+    grad_cam_path.mkdir(exist_ok=True, parents=True)
     healthy_patients_folder = vowels_path / "Healthy"
     random_state = 42
     google_drive_file_id = "1G1lCMR6hhW3BT8FWHekvHEXhxTf8yiqw"
