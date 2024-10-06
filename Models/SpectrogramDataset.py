@@ -103,21 +103,7 @@ class SpectrogramDataset(Dataset):
             if self.spectrograms.get(audio_path) is not None:
                 scaled_img = np.copy(self.spectrograms[audio_path])
             else:
-                y, sr = librosa.load(audio_path, sr=None)
-                y = self.audio_transform(y)
-                mel_spec = librosa.feature.melspectrogram(
-                    y=y,
-                    sr=sr,
-                    hop_length=self.hop_length,
-                    n_fft=self.n_fft,
-                    n_mels=self.n_mels,
-                    fmin=self.fmin,
-                    fmax=self.fmax,
-                )
-                log_mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
-                min_val = log_mel_spec_db.min()
-                max_val = log_mel_spec_db.max()
-                scaled_img = (log_mel_spec_db - min_val) / (max_val - min_val)
+                scaled_img = self.audio_file2spectrogram(audio_path)
                 self.spectrograms[audio_path] = scaled_img.copy()
 
             if self.spectrogram_transform:
@@ -132,6 +118,23 @@ class SpectrogramDataset(Dataset):
             self.samples[sample_id].log_mel_spec_dbs.append(Tensor(log_mel_spec_db))
 
         return torch.concat(self.samples[sample_id].log_mel_spec_dbs), label
+
+    def audio_file2spectrogram(self, audio_path):
+        y, sr = librosa.load(audio_path, sr=None)
+        y = self.audio_transform(y)
+        mel_spec = librosa.feature.melspectrogram(
+            y=y,
+            sr=sr,
+            hop_length=self.hop_length,
+            n_fft=self.n_fft,
+            n_mels=self.n_mels,
+            fmin=self.fmin,
+            fmax=self.fmax,
+        )
+        log_mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
+        min_val = log_mel_spec_db.min()
+        max_val = log_mel_spec_db.max()
+        return (log_mel_spec_db - min_val) / (max_val - min_val)
 
 
 if __name__ == "__main__":
