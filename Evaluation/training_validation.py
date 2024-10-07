@@ -1,3 +1,4 @@
+import random
 import re
 from copy import deepcopy
 from itertools import count
@@ -33,11 +34,14 @@ def training_validation(
     criterion: _Loss,
     model_creator: Callable[[], nn.Module],
     learning_rate: float,
-    learning_rate_scheduler_creator: Callable[Optimizer, LRScheduler],
+    learning_rate_scheduler_creator: Callable[[Optimizer], LRScheduler],
     augmentation: Augmentation,
     project_name: str,
     random_state=42,
 ):
+    torch.manual_seed(random_state)
+    np.random.seed(random_state)
+    random.seed(random_state)
     transforms, val_transforms = get_transform(augmentation)
     cv_iterable, patients_ids, file_paths = get_paths(vowels, num_splits, random_state)
     for fold, (train_idx, val_idx) in enumerate(cv_iterable):

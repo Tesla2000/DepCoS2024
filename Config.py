@@ -1,16 +1,17 @@
 import random
 from datetime import datetime
+from functools import partial
 from pathlib import Path
 from typing import NamedTuple
 
 import numpy as np
-import timm
 import torch
+from dotenv import load_dotenv
 from torch import nn
 from torch.optim import lr_scheduler
 from torchvision import models
 
-
+load_dotenv()
 class Config:
     device = None
     sigma = 0.05
@@ -24,11 +25,13 @@ class Config:
         "Laryngitis",
     )
     model_creators = (
-        lambda: timm.create_model('deit_tiny_patch16_224', num_classes=1),
-        models.efficientnet_b2,
+        # lambda: timm.create_model('deit_tiny_patch16_224', num_classes=1),
+        # models.efficientnet_b2,
         # models.resnet18,
         # partial(models.vgg19, num_classes=1),
         # models.resnet101,
+        models.densenet121,
+        models.regnet_x_3_2gf,
     )
     criterion = nn.BCELoss()
     num_splits = 1

@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 from timm.models import VisionTransformer
 from torch import tensor, Tensor
-from torchvision.models import VGG, ResNet, EfficientNet
+from torchvision.models import VGG, ResNet, EfficientNet, DenseNet, RegNet
 import torch.nn.functional as F
 
 
@@ -72,6 +72,7 @@ def adjust(
                 padding=model.conv1.padding,
                 bias=isinstance(model.conv1.bias, Tensor),
             )
+            model.fc = nn.Linear(model.fc.in_features, 1)
         elif isinstance(model, VGG) and (
             (multichannel and model.features[0].in_channels != 3)
             or (not multichannel and model.features[0].in_channels != 1)
@@ -104,6 +105,59 @@ def adjust(
                 first_layer[0].padding_mode,
             )
             model.features[0] = first_layer
+        elif isinstance(model, DenseNet):
+            model.classifier = nn.Linear(
+                in_features=model.classifier.in_features,
+                out_features=1,
+                bias=model.classifier.bias is not None,
+            )
+            first_layer = model.features[0]
+            model.features[0] = nn.Conv2d(
+                1 + 2 * multichannel,
+                first_layer.out_channels,
+                first_layer.kernel_size,
+                first_layer.stride,
+                first_layer.padding,
+                first_layer.dilation,
+                first_layer.groups,
+                first_layer.bias is not None,
+                first_layer.padding_mode,
+            )
+        elif isinstance(model, RegNet):
+            model.fc = nn.Linear(
+                in_features=model.fc.in_features,
+                out_features=1,
+                bias=model.fc.bias is not None,
+            )
+            model.stem[0] = nn.Conv2d(
+                1 + 2 * multichannel,
+                model.stem[0].out_channels,
+                model.stem[0].kernel_size,
+                model.stem[0].stride,
+                model.stem[0].padding,
+                model.stem[0].dilation,
+                model.stem[0].groups,
+                model.stem[0].bias is not None,
+                model.stem[0].padding_mode,
+            )
+        elif isinstance(model, DenseNet):
+            model.classifier = nn.Linear(
+                in_features=model.classifier.in_features,
+                out_features=1,
+                bias=model.classifier.bias is not None,
+            )
+            first_layer = model.features[0]
+            model.features[0] = nn.Conv2d(
+                1 + 2 * multichannel,
+                first_layer.out_channels,
+                first_layer.kernel_size,
+                first_layer.stride,
+                first_layer.padding,
+                first_layer.dilation,
+                first_layer.groups,
+                first_layer.bias is not None,
+                first_layer.padding_mode,
+            )
         elif isinstance(model, VisionTransformer):
             model.patch_embed.proj = nn.Conv2d(
                 1 + 2 * multichannel,
@@ -116,8 +170,6 @@ def adjust(
                 model.patch_embed.proj.bias is not None,
                 model.patch_embed.proj.padding_mode,
             )
-        elif not isinstance(model, VGG):
-            model.fc = nn.Linear(model.fc.in_features, 1)
 
         model.forward = (
             partial(
