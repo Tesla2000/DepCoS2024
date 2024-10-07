@@ -91,6 +91,7 @@ def adjust(
         )(model.forward)
         model.__name__ += "Window" if window else "Traditional"
         model.__name__ += type(model).__name__
+        model.__name__ += "".join(filter(str.isdigit, model_creation_function.__name__))
         return model
 
     return wrapper

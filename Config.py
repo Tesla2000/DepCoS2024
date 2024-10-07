@@ -6,11 +6,12 @@ from typing import NamedTuple
 
 import numpy as np
 import torch
+from dotenv import load_dotenv
 from torch import nn
 from torch.optim import lr_scheduler
 from torchvision import models
 
-
+load_dotenv()
 class Config:
     device = None
     sigma = 0.05
