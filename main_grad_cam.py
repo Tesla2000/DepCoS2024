@@ -1,18 +1,16 @@
 import re
-from functools import partial
 
 import cv2
 import numpy as np
 import torch
 from PIL import Image
 from pytorch_grad_cam import GradCAM, ScoreCAM, AblationCAM
-from pytorch_grad_cam.utils.image import show_cam_on_image
 from pytorch_grad_cam.utils.model_targets import BinaryClassifierOutputTarget
-from torchvision import transforms, models
+from torchvision import transforms
 from tqdm import tqdm
 
 from Config import Config
-from Evaluation.utilities import get_patients_id, get_files_path, \
+from Evaluation.utilities import get_files_path, \
     check_cuda_availability
 from Models import SpectrogramDataset
 from Models.model_adjustment import adjust
@@ -43,9 +41,6 @@ def main():
         model = adjust(model_creation_function, multichannel=False, window=False)()
         model.load_state_dict(torch.load(model_path, map_location=check_cuda_availability()))
         vowels = re.findall(r"_([auil]+)_", model_path.name)[0]
-        if len(vowels) != 1:
-            print("Only a single vowel should be used")
-            continue
         file_paths = set(get_files_path(vowels))
         healthy_paths = set(path for path in file_paths if "Healthy" in path)
         diseased_paths = file_paths - healthy_paths
