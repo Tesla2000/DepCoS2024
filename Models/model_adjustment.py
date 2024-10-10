@@ -72,7 +72,6 @@ def adjust(
                 padding=model.conv1.padding,
                 bias=isinstance(model.conv1.bias, Tensor),
             )
-            model.fc = nn.Linear(model.fc.in_features, 1)
         elif isinstance(model, VGG) and (
             (multichannel and model.features[0].in_channels != 3)
             or (not multichannel and model.features[0].in_channels != 1)
@@ -170,7 +169,8 @@ def adjust(
                 model.patch_embed.proj.bias is not None,
                 model.patch_embed.proj.padding_mode,
             )
-
+        if isinstance(model, ResNet):
+            model.fc = nn.Linear(model.fc.in_features, 1)
         model.forward = (
             partial(
                 _window_forward_wrapper,

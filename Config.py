@@ -30,8 +30,8 @@ class Config:
         # models.resnet18,
         # partial(models.vgg19, num_classes=1),
         # models.resnet101,
-        models.densenet121,
-        models.regnet_x_3_2gf,
+        # models.densenet121,
+        # models.regnet_x_3_2gf,
     )
     criterion = nn.BCELoss()
     num_splits = 1
@@ -39,7 +39,7 @@ class Config:
     batch_size = 16
     learning_rate_scheduler_creator = lambda optimizer: lr_scheduler.ExponentialLR(optimizer, gamma=.9)
     learning_rate = 2e-5
-    root_path = Path('.')
+    root_path = Path(__file__).parent
     data_path = root_path / "Data"
     session_time = datetime.now().strftime("%Y%m%d%H%M")
     results_folder = data_path.joinpath("results")
@@ -49,7 +49,9 @@ class Config:
     lists_path = data_path / "Lists"
     vowels_path = data_path / "Vowels"
     grad_cam_path = data_path / "GradCam"
+    image_path = data_path / "images"
     grad_cam_path.mkdir(exist_ok=True, parents=True)
+    image_path.mkdir(exist_ok=True, parents=True)
     healthy_patients_folder = vowels_path / "Healthy"
     random_state = 42
     google_drive_file_id = "1G1lCMR6hhW3BT8FWHekvHEXhxTf8yiqw"
