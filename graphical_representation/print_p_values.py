@@ -1,56 +1,40 @@
-import re
-from dataclasses import dataclass
-from itertools import groupby, permutations
+from itertools import permutations
+from itertools import permutations
 from pathlib import Path
 from statistics import mean
 
 from more_itertools import map_reduce
 from numpy import std
-from scipy.stats import mannwhitneyu, shapiro, ttest_ind, f_oneway, ttest_rel, wilcoxon
+from scipy.stats import f_oneway
 
-@dataclass
-class Result:
-    f1: float
-    model: str
-    multichannel: bool
-    window: bool
-    vowel: str
-    augmentation: str
+from graphical_representation.calc_p_value import calc_p_value
+from graphical_representation.result import Result
 
-    @classmethod
-    def from_file_name(cls, file_name: str) -> "Result":
-        return Result(
-            f1=float(re.findall(r'f1\_(0\.\d+)', file_name)[0]),
-            multichannel='MultiChannel' in file_name,
-            window='Window' in file_name,
-            vowel=re.findall(r'\_([auil]+)_', file_name)[0],
-            augmentation=re.findall(r'\.([A-Z\_]+)\.pth', file_name)[0].replace('_', ' '),
-            model=re.findall(r'(Window|Traditional)([A-Za-z]+)\_', file_name)[0][1]
-        )
 
 def divide2sets_and_compare(divided_results: dict[str, list[float]]):
-    print("ANOVA:", f_oneway(*divided_results.values()).pvalue)
+    anova_result = f_oneway(*divided_results.values()).pvalue
+    if anova_result > 0.05 and len(divided_results.values()) > 2:
+        return
+    print("ANOVA:", anova_result)
     for (name1, values1), (name2, values2) in permutations(divided_results.items(), 2):
-        abnormal = (shapiro(values1).pvalue < .05 or shapiro(values2).pvalue < .05)
-        if len(values1) == len(values2):
-            p_value = (wilcoxon if abnormal else ttest_rel)(values1, values2, alternative="greater").pvalue
-        else:
-            p_value = (mannwhitneyu if abnormal else ttest_ind)(values1, values2, alternative="greater").pvalue
+        p_value = calc_p_value(values1, values2)
         if p_value < .05:
-            print("Abnormality", abnormal)
             print(f"{name1} better than {name2} {p_value:.2e}")
     for name, values in divided_results.items():
         print(f"{name} $\mean$={mean(values):.2f}, $\sigma$={std(values):.2f}")
 
 if __name__ == '__main__':
     print(100 * "=" + f"\nModel comparison:\n\n")
-    results = tuple(map(Result.from_file_name, Path('file_names').read_text().splitlines()))
+    results = tuple(map(Result.from_file_name, Path(
+        'file_names').read_text().splitlines()))
     model_divided_results = map_reduce(results, lambda result: result.model, lambda result: result.f1)
     divide2sets_and_compare(model_divided_results)
     model_divided_data = map_reduce(results, lambda result: result.model)
     for model, data in (*model_divided_data.items(), ("All models", results)):
         print(100*"=" + f"\nFor {model}:\n\n")
         for divisor in ("multichannel", "window", "vowel", "augmentation"):
+            if divisor == "augmentation":
+                data = filter(lambda item: not item.window, data)
             print(divisor.capitalize(), "comparison:\n")
             divided_data = map_reduce(data, lambda item: getattr(item, divisor), lambda result: result.f1)
             divide2sets_and_compare(divided_data)
