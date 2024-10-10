@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 import numpy as np
+import timm
 import torch
 from dotenv import load_dotenv
 from torch import nn
@@ -26,13 +27,14 @@ class Config:
         "Laryngitis",
     )
     model_creators = (
-        # lambda: timm.create_model('deit_tiny_patch16_224', num_classes=1),
-        # models.efficientnet_b2,
-        # models.resnet18,
-        # partial(models.vgg19, num_classes=1),
-        # models.resnet101,
-        # models.densenet121,
-        # models.regnet_x_3_2gf,
+        partial(models.vgg19, num_classes=1),
+        models.resnet18,
+        models.resnet101,
+        models.densenet121,
+        models.efficientnet_b2,
+        models.regnet_x_3_2gf,
+        # lambda: torch.hub.load('facebookresearch/deit:main',
+        #                    'deit_tiny_patch16_224'),
     )
     criterion = nn.BCELoss()
     num_splits = 1
