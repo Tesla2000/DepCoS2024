@@ -12,7 +12,7 @@ if __name__ == '__main__':
         'file_names').read_text().splitlines()))
     model_divided_results = map_reduce(results, lambda result: result.model, lambda result: result.f1)
     plt.boxplot(model_divided_results.values(), patch_artist=True)
-    plt.xticks(range(1, 1 + len(model_divided_results.values())), list(model_divided_results.keys()))
+    plt.xticks(range(1, 1 + len(model_divided_results.values())), list(model_divided_results.keys()), rotation=-15)
     plt.ylabel('F1-score')
     result_path = Config.image_path / "model_results.png"
     plt.savefig(result_path)

@@ -13,7 +13,7 @@ from graphical_representation.result import Result
 
 def divide2sets_and_compare(divided_results: dict[str, list[float]]):
     anova_result = f_oneway(*divided_results.values()).pvalue
-    if anova_result > 0.05:
+    if anova_result > 0.05 and len(divided_results.values()) > 2:
         return
     print("ANOVA:", anova_result)
     for (name1, values1), (name2, values2) in permutations(divided_results.items(), 2):

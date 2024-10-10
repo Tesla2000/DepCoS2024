@@ -23,8 +23,7 @@ def main():
     model.load_state_dict(torch.load(model_path, map_location=check_cuda_availability()))
     vowels = re.findall(r"_([auil]+)_", model_path.name)[0]
     file_paths = set(get_files_path(vowels))
-    healthy_patient_ids = set(get_patients_id(vowels, health=True))
-    healthy_paths = set(path for path in file_paths if re.findall("\d+", path)[0] in healthy_patient_ids)
+    healthy_paths = set(path for path in file_paths if "Healthy" in path)
     diseased_paths = file_paths - healthy_paths
     transformations = transforms.Compose(
         [
@@ -34,17 +33,20 @@ def main():
     )
     target_layers = [model.features[-1]]
 
-    for state, category, paths in (("health", -1, healthy_paths), ("diseased", 1, diseased_paths)):
+    for state, category, paths in (
+            ("health", -1, healthy_paths),
+            # ("diseased", 1, diseased_paths),
+    ):
         spectrograms = torch.tensor(np.array(tuple(map(transformations, map(Image.fromarray, map(SpectrogramDataset([]).audio_file2spectrogram, paths))))))
         targets = [BinaryClassifierOutputTarget(category),]
         for cam_method in (
-                ScoreCAM,
-                AblationCAM,
+                # ScoreCAM,
+                # AblationCAM,
                 GradCAM,
         ):
             file_path = Config.grad_cam_path.joinpath(f"{model.__name__}_{cam_method.__name__}_{state}_{''.join(vowels)}.png")
-            if file_path.exists():
-                continue
+            # if file_path.exists():
+            #     continue
             with cam_method(model=model, target_layers=target_layers) as cam:
                 grayscale_cam = np.mean(np.concatenate(tuple(cam(input_tensor=spectrograms[i:i+batch_size], targets=targets) for i in tqdm(range(0, len(spectrograms), batch_size)))), axis=0) * 255
                 array = grayscale_cam.astype(np.uint8)

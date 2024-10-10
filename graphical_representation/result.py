@@ -19,5 +19,5 @@ class Result:
             window='Window' in file_name,
             vowel=re.findall(r'\_([auil]+)_', file_name)[0],
             augmentation=re.findall(r'\.([A-Z\_]+)\.pth', file_name)[0].replace('_', ' '),
-            model=re.findall(r'(Window|Traditional)([A-Za-z]+)\_', file_name)[0][1]
+            model=re.findall(r'(Window|Traditional)([A-Za-z0-9]+)\_', file_name)[0][1]
         )
