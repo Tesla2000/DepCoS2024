@@ -27,10 +27,10 @@ class Config:
         "Laryngitis",
     )
     model_creators = (
-        # partial(models.vgg19, num_classes=1),
-        models.resnet18,
-        # models.resnet101,
-        models.densenet121,
+        partial(models.vgg19, num_classes=1),
+        # models.resnet18,
+        models.resnet101,
+        # models.densenet121,
         # models.efficientnet_b2,
         # models.regnet_x_3_2gf,
         # lambda: torch.hub.load('facebookresearch/deit:main',
