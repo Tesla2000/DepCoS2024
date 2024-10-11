@@ -20,20 +20,20 @@ def main():
     batch_size = 1
     model_paths = (
         # Config.results_folder.joinpath("f1_0.73_SingleChannelTraditionalVGG_aui_Augmentation.RESIZE.pth"), # vgg
-        Config.results_folder.joinpath("f1_0.72_SingleChannelTraditionalResNet18_a_Augmentation.FREQUENCY_MASKING.pth"), # resnet18
+        # Config.results_folder.joinpath("f1_0.72_SingleChannelTraditionalResNet18_a_Augmentation.FREQUENCY_MASKING.pth"), # resnet18
         # Config.results_folder.joinpath(""), # resnet101
-        Config.results_folder.joinpath("f1_0.73_SingleChannelTraditionalDenseNet_i_Augmentation.TIME_MASKING.pth"), # densenet121
-        # Config.results_folder.joinpath(""), # efficientnet_b2
-        # Config.results_folder.joinpath(""), # regnet_x_3_2gf
+        # Config.results_folder.joinpath("f1_0.73_SingleChannelTraditionalDenseNet_i_Augmentation.TIME_MASKING.pth"), # densenet121
+        Config.results_folder.joinpath("f1_0.73_SingleChannelTraditionalEfficientNet_a_Augmentation.RESIZE.pth"), # efficientnet_b2
+        Config.results_folder.joinpath("f1_0.72_SingleChannelTraditionalRegNet_a_Augmentation.TIME_MASKING.pth"), # regnet_x_3_2gf
         # Config.results_folder.joinpath(""), # deit
     )
     target_layer_generators = [
         # lambda model: model.features[-1],  # vgg
-        lambda model: model.layer4[-1],  # resnet18
+        # lambda model: model.layer4[-1],  # resnet18
         # lambda model: model.layer4[-1],  # resnet101
-        lambda model: model.features[-1],  # densenet121
-        # lambda model: model.features[-1],  # efficientnet_b2
-        # lambda model: getattr(model.trunk_output.block4, "block4-1").f.b,  # regnet_x_3_2gf
+        # lambda model: model.features[-1],  # densenet121
+        lambda model: model.features[-1],  # efficientnet_b2
+        lambda model: getattr(model.trunk_output.block4, "block4-1").f.b,  # regnet_x_3_2gf
         # lambda model: model.blocks[-1].norm1,  # deit
     ]
     n_samples = 50
