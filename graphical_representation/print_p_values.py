@@ -20,8 +20,8 @@ def divide2sets_and_compare(divided_results: dict[str, list[float]]):
         p_value = calc_p_value(values1, values2)
         if p_value < .05:
             print(f"{name1} better than {name2} {p_value:.2e}")
-    for name, values in divided_results.items():
-        print(f"{name} $\mean$={mean(values):.2f}, $\sigma$={std(values):.2f}")
+    for name, values in sorted(divided_results.items(), key=lambda item: -mean(item[1])):
+        print(f"{name}=${mean(values):.2f}\pm{std(values):.2f}$")
 
 if __name__ == '__main__':
     print(100 * "=" + f"\nModel comparison:\n\n")

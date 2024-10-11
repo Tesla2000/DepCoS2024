@@ -16,7 +16,7 @@ if __name__ == '__main__':
     results = tuple(map(Result.from_file_name, Path(
         'file_names').read_text().splitlines()))
     model_divided_results = map_reduce(results, lambda result: result.model)
-    for model_name, results in model_divided_results.items():
+    for model_name, results in sorted(model_divided_results.items(), key=lambda item: -max(result.f1 for result in item[1])):
         table_str = r"""\multirow{5}{*}{ResNet-18} & multichannel & slicing & augmentation & vowel & f1 \\ \cline{2-6}
  & multichannel & slicing & augmentation & vowel & f1 \\ \cline{2-6}
  & multichannel & slicing & augmentation & vowel & f1 \\ \cline{2-6}
