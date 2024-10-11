@@ -39,7 +39,7 @@ def main():
     n_samples = 50
     for model_creation_function, model_path, target_layer_generator in zip(Config.model_creators, model_paths, target_layer_generators):
         model = adjust(model_creation_function, multichannel=False, window=False)()
-        model.load_state_dict(torch.load(model_path, map_location=torch.device("cuda:0")))
+        model.load_state_dict(torch.load(model_path, map_location=torch.device("cuda:2")))
         vowels = re.findall(r"_([auil]+)_", model_path.name)[0]
         file_paths = set(get_files_path(vowels))
         healthy_paths = set(path for path in file_paths if "Healthy" in path)
